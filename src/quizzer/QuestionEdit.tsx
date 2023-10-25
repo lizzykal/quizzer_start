@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Question, QuestionType } from "../interfaces/question";
-
+import { Question } from "../interfaces/question";
 import "./QuestionEdit.css";
+import { Form, Button } from 'react-bootstrap';
 
 export const QuestionEdit = ({
     index,
@@ -10,7 +10,14 @@ export const QuestionEdit = ({
     editQuestion,
     removeQuestion,
     swapQuestion
-}: {}) => {
+}: {
+    index: number;
+    lastIndex: number;
+    question: Question; // Assuming you have a Question interface defined
+    editQuestion: (id: number, question: Question) => void;
+    removeQuestion: (id: number) => void;
+    swapQuestion: (fromIndex: number, toIndex: number) => void;
+}) => {
     const [a, b] = useState<number>(
         question.options.findIndex((s: string) => question.expected === s)
     );
@@ -38,7 +45,7 @@ export const QuestionEdit = ({
     };
 
     const handlePoints = (e: React.ChangeEvent<HTMLInputElement>) => {
-    	question.points = parseInt(e.target.value)
+        question.points = parseInt(e.target.value);
         editQuestion(question.id, question);
     };
 
@@ -62,6 +69,16 @@ export const QuestionEdit = ({
             ...question,
             expected: question.options[idx]
         });
+    };
+
+    const handleSwitch = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        // Handle the change of question type here
+        const newType = e.target.value;
+        if (newType === "multiple_choice_question") {
+            switchMulti();
+        } else {
+            // Handle other question types if needed
+        }
     };
 
     return (
