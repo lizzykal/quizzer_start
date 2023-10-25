@@ -9,9 +9,14 @@ export const QuizList = ({
     quizzes,
     editQuiz,
     deleteQuiz,
-    showModal
-}: {}) => {
-    const [displayId, setDisplayId] = useState<null | number>(null);
+    showModal,
+}: {
+    quizzes: Quiz[];
+    editQuiz: (quizId: number, updatedQuiz: Quiz) => void;
+    deleteQuiz: (quizId: number) => void;
+    showModal: () => void;
+}) => {
+    const [displayId, setDisplayId] = useState<number | null>(null);
 
     const handleQuizView = (id: number) => {
         setDisplayId(id);
@@ -23,33 +28,27 @@ export const QuizList = ({
 
     return (
         <div className="quiz_list">
-            {!displayId && (
+            {!displayId ? (
                 <>
                     {quizzes.map((quiz: Quiz) => (
                         <QuizCard
                             key={quiz.id}
                             quiz={quiz}
-                            handleClick={handleQuizView}
-                        ></QuizCard>
+                            handleClick={() => handleQuizView(quiz.id)}
+                        />
                     ))}
                     <Button className="add_btn" onClick={showModal}>
                         Add New Quiz
                     </Button>
                 </>
+            ) : (
+                <QuizView
+                    quiz={quizzes.find((quiz) => quiz.id === displayId)}
+                    editQuiz={editQuiz}
+                    deleteQuiz={deleteQuiz}
+                    resetView={resetQuizView}
+                />
             )}
-            {quizzes.map((quiz: Quiz) => {
-                if (displayId === quiz.id) {
-                    return (
-                        <QuizView
-                            key={quiz.id}
-                            quiz={quiz}
-                            editQuiz={editQuiz}
-                            deleteQuiz={deleteQuiz}
-                            resetView={resetQuizView}
-                        ></QuizView>
-                    );
-                }
-            })}
         </div>
     );
 };

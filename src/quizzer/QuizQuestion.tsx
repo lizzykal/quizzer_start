@@ -1,9 +1,8 @@
-import React from "react";
+import React, { ChangeEvent, useState } from "react";
 import { Question } from "../interfaces/question";
 import { Form, Button } from "react-bootstrap";
 
 import "./QuizQuestion.css";
-type ChangeEvent = React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>;
 
 export const QuizQuestion = ({
     index,
@@ -11,8 +10,15 @@ export const QuizQuestion = ({
     submitted,
     handleSubmit,
     addPoints,
-    editQuestionSub
-}: {}) => {
+    editQuestionSub,
+}: {
+    index: number;
+    question: Question;
+    submitted: boolean;
+    handleSubmit: (index: number) => void;
+    addPoints: (points: number) => void;
+    editQuestionSub: (questionId: number, submission: string) => void;
+}) => {
     const handleClick = (e: ChangeEvent) => {
         if (!submitted) {
             editQuestionSub(question.id, e.target.value);
@@ -22,7 +28,7 @@ export const QuizQuestion = ({
     const handleSubmitClick = () => {
         handleSubmit(index);
         if (question.submission === question.expected) {
-            addPoints(5);
+            addPoints(question.points);
         }
     };
 
@@ -37,7 +43,7 @@ export const QuizQuestion = ({
                     <h4>
                         {question.points} pt{question.points !== 1 ? "s" : ""}
                     </h4>
-                </div>f
+                </div>
                 <div className="answer_box">
                     {question.type === "short_answer_question" && (
                         <Form.Group controlId="formShortAnswerBox">
@@ -45,7 +51,7 @@ export const QuizQuestion = ({
                                 data-testid="select-option"
                                 value={question.submission}
                                 onChange={handleClick}
-                            ></Form.Control>
+                            />
                         </Form.Group>
                     )}
                     {question.type === "multiple_choice_question" && (
@@ -53,7 +59,7 @@ export const QuizQuestion = ({
                             {question.options.map(
                                 (option: string, i: number) => (
                                     <Form.Check
-                                        type=""
+                                        type="radio"
                                         name={"questionChoice" + index}
                                         key={option + " | " + i}
                                         label={option}
@@ -67,9 +73,7 @@ export const QuizQuestion = ({
                     )}
                     <div className="sub_check">
                         <h2 className={submitted ? "" : "hidden"}>
-                            {question.submission === question.expected
-                                ? "✔️"
-                                : "❌"}
+                            {question.submission === question.expected ? "✔️" : "❌"}
                         </h2>
                         <Button
                             disabled={submitted}
