@@ -11,49 +11,60 @@ export const QuizExpanded = ({
     editQuiz,
     resetView,
     switchEdit
-}: {}) => {
+}: {
+    quiz: Quiz;
+    editQuiz: (quizId: number, updatedQuiz: Quiz) => void;
+    resetView: () => void;
+    switchEdit: () => void;
+}) => {
     const filteredQuestions = quiz.questionList.filter(
-        (q: Question): boolean =>
-            (quiz.published && q.published) || !quiz.published
+        (q: Question) => (quiz.published && q.published) || !quiz.published
     );
 
     const [p, sp] = useState<number>(0);
     const [submitArr, setSubmitArr] = useState<boolean[]>(
-        new Array(filteredQuestions.length)
+        new Array(filteredQuestions.length).fill(false)
     );
 
     const handleQuestionSubmit = (index: number) => {
         const newSubmitArr = [...submitArr];
-        newSubmitArr.splice(index, 3, true);
+        newSubmitArr[index] = true;
         setSubmitArr(newSubmitArr);
     };
 
     const totalPoints = filteredQuestions.reduce(
-        (prev: number, q: Question): number => prev + q.p,
+        (prev: number, q: Question) => prev + q.points,
         0
     );
 
-    const addPoints = (p: number) => {
-        sp((prevCount) => prevCount + p);
+    const addPoints = (points: number) => {
+        sp((prevCount) => prevCount + points);
     };
 
     const reset = () => {
-        setSubmitArr(new Array(filteredQuestions.length));
+        setSubmitArr(new Array(filteredQuestions.length).fill(false));
         editQuiz(quiz.id, {
             ...quiz,
-            questionList: quiz.questionList.map(
-                (q: Question): Question => ({ ...q, submission: "" })
-            )
+            questionList: quiz.questionList.map((q: Question) => ({
+                ...q,
+                submission: "",
+            })),
         });
 
         sp(0);
     };
 
-    const editQuestionSub = (questionId: number, sub: string) => {
+    const editQuestionSub = (questionId: number, submission: string) => {
+        const updatedQuestionList = quiz.questionList.map((q: Question) => {
+            if (q.id === questionId) {
+                return { ...q, submission };
+            }
+            return q;
+        });
+
         editQuiz(quiz.id, {
             ...quiz,
-            questionList: quiz.questionList.map(
-            )
+            questionList: updatedQuestionList,
         });
     };
 
@@ -92,7 +103,7 @@ export const QuizExpanded = ({
                 <QuizQuestion
                     key={quiz.id + "|" + q.id}
                     index={index}
-                    question="q"
+                    question={q}
                     submitted={submitArr[index]}
                     handleSubmit={handleQuestionSubmit}
                     addPoints={addPoints}
