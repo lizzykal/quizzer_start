@@ -12,39 +12,53 @@ export const QuizEdit = ({
     deleteQuiz,
     switchEdit,
     resetView
-}: {) => {
+}: {
+    quiz: Quiz;
+    editQuiz: (quizId: number, updatedQuiz: Quiz) => void;
+    deleteQuiz: (quizId: number) => void;
+    switchEdit: () => void;
+    resetView: () => void;
+}) => {
     const [newQuiz, setNewQuiz] = useState<Quiz>({ ...quiz });
 
     const editQuestion = (questionId: number, newQuestion: Question) => {
+        const updatedQuestionList = newQuiz.questionList.map((q) => {
+            if (q.id === questionId) {
+                return newQuestion;
+            }
+            return q;
+        });
+
         setNewQuiz({
             ...newQuiz,
-            questionList: newQuiz.questionList.map(
-            )
+            questionList: updatedQuestionList,
         });
     };
 
     const removeQuestion = (questionId: number) => {
+        const updatedQuestionList = newQuiz.questionList.filter((q) => q.id !== questionId);
+
         setNewQuiz({
             ...newQuiz,
-            questionList: newQuiz.questionList.filter(
-            )
+            questionList: updatedQuestionList,
         });
     };
 
     const saveChanges = () => {
         editQuiz(quiz.id, { ...newQuiz });
+        switchEdit();
     };
 
     const swapQuestion = (idx1: number, idx2: number) => {
+        const updatedQuestionList = newQuiz.questionList.map((q, idx) => {
+            if (idx === idx1) return newQuiz.questionList[idx2];
+            if (idx === idx2) return newQuiz.questionList[idx1];
+            return q;
+        });
+
         setNewQuiz({
             ...newQuiz,
-            questionList: newQuiz.questionList.map(
-                (q: Question, idx: number): Question => {
-                    if (idx === idx1) return newQuiz.questionList[idx2];
-                    if (idx === idx2) return newQuiz.questionList[idx1];
-                    return;
-                }
-            )
+            questionList: updatedQuestionList,
         });
     };
 
@@ -57,9 +71,7 @@ export const QuizEdit = ({
                             <Form.Label>Title: </Form.Label>
                             <Form.Control
                                 value={newQuiz.title}
-                                onChange={(
-                                    e: React.ChangeEvent<HTMLInputElement>
-                                ) =>
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                     setNewQuiz({
                                         ...newQuiz,
                                         title: e.target.value
@@ -74,12 +86,10 @@ export const QuizEdit = ({
                             label="Quiz Published"
                             data-testid="Quiz Published"
                             checked={newQuiz.published}
-                            onChange={(
-                                e: React.ChangeEvent<HTMLInputElement>
-                            ) => {
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                                 setNewQuiz({
                                     ...newQuiz,
-                                    published: 
+                                    published: e.target.checked
                                 });
                             }}
                         ></Form.Check>
@@ -141,7 +151,6 @@ export const QuizEdit = ({
                             className="save_edit_btn"
                             onClick={() => {
                                 saveChanges();
-                                switchEdit();
                             }}
                         >
                             Save
