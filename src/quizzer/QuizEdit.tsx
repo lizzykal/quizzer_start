@@ -66,6 +66,10 @@ export const QuizEdit = ({
         throw new Error("Function not implemented.");
     }
 
+    function n(name: any, arg1: { exact: false; }): HTMLElement | null {
+        throw new Error("Function not implemented.");
+    }
+
     return (
         <div>
             <div className="edit_header">
@@ -133,7 +137,7 @@ export const QuizEdit = ({
                             questionList: [
                                 ...newQuiz.questionList,
                                 {
-                                    name: questionList,
+                                    name: n,
                                     id: newQuiz.questionList.length,
                                     body: "Example Question",
                                     type: "short_answer_question",
