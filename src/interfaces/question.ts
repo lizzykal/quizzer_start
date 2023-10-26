@@ -3,6 +3,7 @@ export type QuestionType = "multiple_choice_question" | "short_answer_question";
 
 /** A representation of a Question in a quizzing application */
 export interface Question {
+    name(name: any, arg1: { exact: false; }): HTMLElement | null;
     /** A unique identifier for the question */
     id: number;
     /** The instructions and content of the Question */
