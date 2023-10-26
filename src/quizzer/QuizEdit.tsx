@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Form } from "react-bootstrap";
-import { Question } from "../interfaces/question";
+import { Question, QuestionType } from "../interfaces/question";
 import { Quiz } from "../interfaces/quiz";
 import { QuestionEdit } from "./QuestionEdit";
 
@@ -61,6 +61,10 @@ export const QuizEdit = ({
             questionList: updatedQuestionList,
         });
     };
+
+    function id(name: any, arg1: { exact: false; }): HTMLElement | null {
+        throw new Error("Function not implemented.");
+    }
 
     return (
         <div>
@@ -129,6 +133,7 @@ export const QuizEdit = ({
                             questionList: [
                                 ...newQuiz.questionList,
                                 {
+                                    name: questionList,
                                     id: newQuiz.questionList.length,
                                     body: "Example Question",
                                     type: "short_answer_question",
@@ -173,3 +178,4 @@ export const QuizEdit = ({
         </div>
     );
 };
+
